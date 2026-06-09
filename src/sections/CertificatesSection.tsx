@@ -36,6 +36,14 @@ const CERTS = [
     image: '/certificates/sololearn.png',
     color: '#34D399',
   },
+  {
+    title: 'Wadhwani Foundation Certificate',
+    org: 'Wadhwani Foundation',
+    year: '2025',
+    file: '/img/Wadhwani Foundation Certificate - 69f60538b36cdf49a0e6a754_page-0001.jpg',
+    image: '/img/Wadhwani Foundation Certificate - 69f60538b36cdf49a0e6a754_page-0001.jpg',
+    color: '#10B981',
+  },
 ];
 
 export default function CertificatesSection() {
