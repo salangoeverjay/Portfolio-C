@@ -7,7 +7,7 @@ const CERTS = [
   {
     title: 'CCNA: Switching, Routing & Wireless Essentials',
     org: 'Cisco / DNSC',
-    year: '2024',
+    year: '2025',
     file: '/cert-ccna.pdf',
     image: '/certificates/ccna.jpg',
     color: '#58A6FF',
@@ -15,7 +15,7 @@ const CERTS = [
   {
     title: 'Professional Certificate',
     org: 'DNSC',
-    year: '2024',
+    year: '2025',
     file: '/cert-2.pdf',
     image: '/certificates/professional.jpg',
     color: '#8B5CF6',
