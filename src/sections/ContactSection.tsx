@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import FadeIn from '../components/FadeIn';
 import ContactButton from '../components/ContactButton';
@@ -13,7 +13,7 @@ export default function ContactSection() {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const formEndpoint = `https://formsubmit.co/ajax/${encodeURIComponent(EMAIL)}`;
+  const iframeLoadedOnce = useRef(false);
 
   const copyEmail = () => {
     navigator.clipboard.writeText(EMAIL);
@@ -21,36 +21,9 @@ export default function ContactSection() {
     setTimeout(() => setCopied(false), 2200);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     setSending(true);
     setError(null);
-
-    try {
-      const response = await fetch(formEndpoint, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...form,
-          _captcha: 'false',
-          _subject: `${form.subject} - ${form.name}`,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Unable to send message right now.');
-      }
-
-      setSent(true);
-      setForm({ name: '', email: '', subject: '', message: '' });
-    } catch {
-      setError('Message could not be sent right now. Please use the email button instead.');
-    } finally {
-      setSending(false);
-    }
   };
 
   return (
@@ -142,6 +115,21 @@ export default function ContactSection() {
         {/* Right — form */}
         <FadeIn delay={0.2} x={30} y={0}>
           <div className="p-6 sm:p-8 rounded-2xl border" style={{ borderColor: 'rgba(12,12,12,0.1)', background: 'rgba(12,12,12,0.03)' }}>
+            <iframe
+              title="Contact form submission target"
+              name="contact-submit-frame"
+              className="hidden"
+              onLoad={() => {
+                if (!iframeLoadedOnce.current) {
+                  iframeLoadedOnce.current = true;
+                  return;
+                }
+
+                setSending(false);
+                setSent(true);
+                setForm({ name: '', email: '', subject: '', message: '' });
+              }}
+            />
               {error ? (
                 <div className="mb-4 rounded-xl border px-4 py-3 text-sm" style={{ borderColor: 'rgba(220,38,38,0.2)', background: 'rgba(220,38,38,0.06)', color: '#991B1B' }}>
                   {error}
@@ -163,10 +151,18 @@ export default function ContactSection() {
                 </button>
               </motion.div>
             ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <form
+                onSubmit={handleSubmit}
+                action={`https://formsubmit.co/${EMAIL}`}
+                method="POST"
+                target="contact-submit-frame"
+                className="flex flex-col gap-4"
+              >
                 <h3 className="font-black text-[#0C0C0C] uppercase tracking-tight mb-2" style={{ fontSize: 'clamp(1.1rem,2vw,1.4rem)' }}>
                   Send a Message
                 </h3>
+                <input type="hidden" name="_captcha" value="false" />
+                <input type="hidden" name="_subject" value={`${form.subject} - ${form.name}`} />
                 <div className="grid sm:grid-cols-2 gap-4">
                   {[
                     { key: 'name', label: 'Name', placeholder: 'Your name', type: 'text' },
@@ -175,6 +171,7 @@ export default function ContactSection() {
                     <div key={key}>
                       <label className="block text-xs font-medium text-[#0C0C0C] opacity-50 uppercase tracking-wider mb-1.5">{label}</label>
                       <input
+                        name={key}
                         type={type}
                         placeholder={placeholder}
                         required
@@ -191,6 +188,7 @@ export default function ContactSection() {
                 <div>
                   <label className="block text-xs font-medium text-[#0C0C0C] opacity-50 uppercase tracking-wider mb-1.5">Subject</label>
                   <input
+                    name="subject"
                     type="text"
                     placeholder="What's this about?"
                     required
@@ -205,6 +203,7 @@ export default function ContactSection() {
                 <div>
                   <label className="block text-xs font-medium text-[#0C0C0C] opacity-50 uppercase tracking-wider mb-1.5">Message</label>
                   <textarea
+                    name="message"
                     rows={5}
                     placeholder="Tell me about your project..."
                     required
