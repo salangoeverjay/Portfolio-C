@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import FadeIn from '../components/FadeIn';
+import photo3 from '../../img/Photo 3.jpg';
+import photo4 from '../../img/Photo 4.jpg';
 
 const SKILL_GROUPS = [
   {
@@ -38,8 +40,8 @@ const SKILL_GROUPS = [
 const PHOTOS = [
   { src: '/projects/Photo 1.jpg', label: 'Photo 1' },
   { src: '/projects/Photo 2.jpg', label: 'Photo 2' },
-  { src: '/img/Photo 3.jpg', label: 'Photo 3' },
-  { src: '/img/Photo 4.jpg', label: 'Photo 4' },
+  { src: photo3 as unknown as string, label: 'Photo 3' },
+  { src: photo4 as unknown as string, label: 'Photo 4' },
 ];
 
 const LEVELS: Record<string, number> = {
