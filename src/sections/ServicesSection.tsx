@@ -38,8 +38,8 @@ const SKILL_GROUPS = [
 const PHOTOS = [
   { src: '/projects/Photo 1.jpg', label: 'Photo 1' },
   { src: '/projects/Photo 2.jpg', label: 'Photo 2' },
-  { src: '/projects/Heartfelt.jpg', label: 'Photo 3' },
-  { src: '/projects/StyleSync.jpg', label: 'Photo 4' },
+  { src: '/projects/Photo 3.jpg', label: 'Photo 3' },
+  { src: '/projects/Photo 4.jpg', label: 'Photo 4' },
 ];
 
 const LEVELS: Record<string, number> = {
