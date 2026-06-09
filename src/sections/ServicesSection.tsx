@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { useRef, useState } from 'react';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
 import FadeIn from '../components/FadeIn';
 
 const SKILL_GROUPS = [
@@ -72,7 +72,7 @@ function SkillPill({ label, inView, delay }: { label: string; inView: boolean; d
   );
 }
 
-function SkillItem({ group, i }: { group: typeof SKILL_GROUPS[0]; i: number }) {
+function SkillItem({ group, i, openPhoto }: { group: typeof SKILL_GROUPS[0]; i: number; openPhoto?: (p: { src: string; label: string }) => void }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-60px' });
 
@@ -117,7 +117,9 @@ function SkillItem({ group, i }: { group: typeof SKILL_GROUPS[0]; i: number }) {
                   key={photo.src}
                   src={photo.src}
                   alt={photo.label}
-                  className="w-1/2 h-[140px] sm:h-[180px] object-cover rounded-2xl"
+                  onClick={() => openPhoto?.(photo)}
+                  role="button"
+                  className="w-1/2 h-[140px] sm:h-[180px] object-cover rounded-2xl cursor-pointer"
                   style={{ border: '1px solid rgba(12,12,12,0.12)' }}
                   loading="lazy"
                 />
@@ -131,6 +133,7 @@ function SkillItem({ group, i }: { group: typeof SKILL_GROUPS[0]; i: number }) {
 }
 
 export default function ServicesSection() {
+  const [activePhoto, setActivePhoto] = useState<{ src: string; label: string } | null>(null);
   return (
     <section
       id="skills"
@@ -147,9 +150,45 @@ export default function ServicesSection() {
 
       <div className="max-w-5xl mx-auto">
         {SKILL_GROUPS.map((group, i) => (
-          <SkillItem key={group.num} group={group} i={i} />
+          <SkillItem key={group.num} group={group} i={i} openPhoto={setActivePhoto} />
         ))}
       </div>
+
+      <AnimatePresence>
+        {activePhoto && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ background: 'rgba(0,0,0,0.8)' }}
+            onClick={() => setActivePhoto(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ type: 'spring', damping: 22, stiffness: 260 }}
+              className="relative w-full max-w-4xl rounded-2xl overflow-hidden"
+              onClick={e => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setActivePhoto(null)}
+                className="absolute top-4 right-4 z-10 text-white opacity-80 hover:opacity-100 text-2xl leading-none"
+                aria-label="Close"
+              >
+                ×
+              </button>
+
+              <img
+                src={activePhoto.src}
+                alt={activePhoto.label}
+                className="w-full h-[70vh] object-contain bg-black"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
