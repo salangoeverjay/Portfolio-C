@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useMemo } from 'react';
 import type { ElementType, ReactNode } from 'react';
 
 interface FadeInProps {
@@ -20,7 +21,7 @@ export default function FadeIn({
   as: Tag = 'div',
   className,
 }: FadeInProps) {
-  const MotionTag = motion.create(Tag as ElementType);
+  const MotionTag = useMemo(() => motion.create(Tag as ElementType), [Tag]);
 
   return (
     <MotionTag
