@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ElementType, ReactNode } from 'react';
+import type { ElementType, ReactNode } from 'react';
 
 interface FadeInProps {
   children: ReactNode;
@@ -31,7 +31,7 @@ export default function FadeIn({
       transition={{
         duration,
         delay,
-        ease: [0.25, 0.1, 0.25, 1],
+        ease: 'easeInOut',
       }}
     >
       {children}

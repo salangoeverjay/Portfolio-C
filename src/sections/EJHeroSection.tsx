@@ -4,7 +4,7 @@ import { ArrowDown, GitBranch, Mail, ExternalLink, User } from 'lucide-react';
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 30 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.7, delay, ease: [0.25, 0.1, 0.25, 1] },
+  transition: { duration: 0.7, delay, ease: 'easeInOut' as const },
 });
 
 export default function EJHeroSection() {
@@ -102,7 +102,7 @@ export default function EJHeroSection() {
           <motion.div
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+            transition={{ duration: 0.8, delay: 0.3, ease: 'easeInOut' as const }}
             className="flex-shrink-0"
           >
             <div className="relative">

@@ -1,4 +1,5 @@
-import { useRef, useState, ReactNode } from 'react';
+import { useRef, useState } from 'react';
+import type { CSSProperties, MouseEvent, ReactNode } from 'react';
 
 interface MagnetProps {
   children: ReactNode;
@@ -18,13 +19,13 @@ export default function Magnet({
   className,
 }: MagnetProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [style, setStyle] = useState<React.CSSProperties>({
+  const [style, setStyle] = useState<CSSProperties>({
     transform: 'translate3d(0,0,0)',
     transition: inactiveTransition,
     willChange: 'transform',
   });
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMouseMove = (e: MouseEvent) => {
     if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
@@ -46,7 +47,7 @@ export default function Magnet({
     });
   };
 
-  const isNear = (e: React.MouseEvent) => {
+  const isNear = (e: MouseEvent) => {
     if (!ref.current) return false;
     const rect = ref.current.getBoundingClientRect();
     return (
