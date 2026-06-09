@@ -12,6 +12,8 @@ export default function ContactSection() {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const formEndpoint = `https://formsubmit.co/ajax/${encodeURIComponent(EMAIL)}`;
 
   const copyEmail = () => {
     navigator.clipboard.writeText(EMAIL);
@@ -19,10 +21,36 @@ export default function ContactSection() {
     setTimeout(() => setCopied(false), 2200);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
-    setTimeout(() => { setSending(false); setSent(true); }, 1400);
+    setError(null);
+
+    try {
+      const response = await fetch(formEndpoint, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...form,
+          _captcha: 'false',
+          _subject: `${form.subject} - ${form.name}`,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Unable to send message right now.');
+      }
+
+      setSent(true);
+      setForm({ name: '', email: '', subject: '', message: '' });
+    } catch {
+      setError('Message could not be sent right now. Please use the email button instead.');
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -114,6 +142,11 @@ export default function ContactSection() {
         {/* Right — form */}
         <FadeIn delay={0.2} x={30} y={0}>
           <div className="p-6 sm:p-8 rounded-2xl border" style={{ borderColor: 'rgba(12,12,12,0.1)', background: 'rgba(12,12,12,0.03)' }}>
+              {error ? (
+                <div className="mb-4 rounded-xl border px-4 py-3 text-sm" style={{ borderColor: 'rgba(220,38,38,0.2)', background: 'rgba(220,38,38,0.06)', color: '#991B1B' }}>
+                  {error}
+                </div>
+              ) : null}
             {sent ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
